@@ -51,6 +51,11 @@
         </nav>
 
         <div id="app" class="container mt-5">
+            <h2 class="display-3">
+                {{ title }}
+            </h2>
+            <h5 class="text-muted mb-5">By {{ author }}</h5>
+
             <div
                 v-if="!editable"
                 class="alert alert-warning alert-dismissible fade show"
@@ -68,26 +73,150 @@
             </div>
 
             <div>
-                {{ positions }}
-                {{ showMajor }}
+                <!-- {{ positions }}
+                {{ showMajor }} -->
                 <button
-                    class="btn btn-primary"
+                    class="btn btn-primary mb-4"
                     v-on:click="showMajor=!showMajor"
                 >
-                    Show Major Only
+                    Toggle Major
                 </button>
-                <div
-                    v-if="isMajor(position.position) || !showMajor"
-                    v-for="position in positions"
-                >
-                    <div class="card m-2">
-                        <div class="card-body">
-                            <div class="card-title">
-                                {{ position.position }}
+                <div class="d-flex justify-content-between flex-wrap">
+                    <div
+                        v-if="isMajor(position.position) || !showMajor"
+                        v-for="position in positions"
+                    >
+                        <div class="card my-2" style="width: 18rem;">
+                            <div class="card-body">
+                                <h5 class="card-title mb-4">
+                                    {{ position.position }}
+                                </h5>
+                                <div v-if="editable" class="input-group">
+                                    <input
+                                        :id="`add${position.position}Text`"
+                                        type="text"
+                                        class="form-control"
+                                    />
+                                    <div class="input-group-append">
+                                        <button
+                                            :id="`add${position.position}Btn`"
+                                            class="btn btn-outline-secondary mb-4"
+                                            v-on:click="addActivity(position.position)"
+                                        >
+                                            +
+                                        </button>
+                                    </div>
+                                </div>
+                                <ul class="list-group">
+                                    <li
+                                        class="list-group-item"
+                                        v-for="activity in position.activities"
+                                    >
+                                        <div>
+                                            <div class="float-left">
+                                                {{ activity.description }}
+                                            </div>
+                                            <div class="float-right">
+                                                <div class="dropdown">
+                                                    <button
+                                                        class="btn m-0 py-0"
+                                                        type="button"
+                                                        id="dropdownMenuButton"
+                                                        data-toggle="dropdown"
+                                                        aria-haspopup="true"
+                                                        aria-expanded="false"
+                                                    >
+                                                        ...
+                                                    </button>
+                                                    <div
+                                                        class="dropdown-menu"
+                                                        aria-labelledby="dropdownMenuButton"
+                                                    >
+                                                        <button
+                                                            class="dropdown-item"
+                                                            data-toggle="modal"
+                                                            data-target="#editModal"
+                                                            v-on:click=
+                                                            "
+                                                            currentAct=JSON.parse(JSON.stringify(activity));
+                                                            currentPos=position;
+                                                            "
+                                                        >
+                                                            Edit
+                                                        </button>
+                                                        <button
+                                                            class="dropdown-item"
+                                                        >
+                                                            Move
+                                                        </button>
+                                                        <button
+                                                            class="dropdown-item"
+                                                        >
+                                                            Delete
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
                             </div>
-                            <div v-for="activity in position.activities">
-                                {{ activity }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- ------------------------- Modal --------------------------- -->
+
+            <!-- ------------------------- Edit -------------------------------- -->
+            <div
+                class="modal fade"
+                id="editModal"
+                tabindex="-1"
+                role="dialog"
+                aria-labelledby="editModalLabel"
+                aria-hidden="true"
+            >
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="editModalLabel">
+                                Edit Activity
+                            </h5>
+                            <button
+                                type="button"
+                                class="close"
+                                data-dismiss="modal"
+                                aria-label="Close"
+                            >
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div v-if="currentAct" class="modal-body">
+                            <h5 class="mb-4">
+                                Edit Value
+                            </h5>
+                            <div class="form-group">
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    v-model="currentAct.description"
+                                />
                             </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button
+                                type="button"
+                                class="btn btn-secondary"
+                                data-dismiss="modal"
+                            >
+                                Close
+                            </button>
+                            <button type="button" class="btn btn-primary"
+                            v-on:click="updateActivity"
+                            data-dismiss="modal"
+                            >
+                                Save changes
+                            </button>
                         </div>
                     </div>
                 </div>
