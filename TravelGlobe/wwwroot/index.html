@@ -37,6 +37,16 @@
         <script src="./script.js"></script>
     </head>
     <body>
+        <nav class="navbar navbar-expand navbar-dark bg-dark">
+            <div class="container">
+                    <a href="./index.html" class="navbar-brand">Ikigai</a>
+                    <a
+                        href="https://github.com/ankur198/TravelGlobe"
+                        class="navbar-text ml-auto"
+                        >View source code - By Ankur Nigam</a
+                    >
+            </div>
+        </nav>
         <div class="container mt-5">
             <div class="form">
                 <div class="form-group">
@@ -93,13 +103,13 @@
                         const response = await createIkigais(name).catch(err =>
                             window.alert(err)
                         );
-                        console.log(response)
+                        console.log(response);
 
                         Cookies.set("ID", response.id);
                         Cookies.set("Title", response.title);
                         Cookies.set("Author", response.author);
 
-                        redirect('./main.html')
+                        redirect("./main.html");
                     }
                 });
 
@@ -121,7 +131,7 @@
                         Cookies.set("Title", ikigai.Title);
                         Cookies.set("Author", ikigai.Author);
 
-                        redirect('./main.html')
+                        redirect("./main.html");
                     }
                 },
 
