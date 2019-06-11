@@ -5,21 +5,130 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta http-equiv="X-UA-Compatible" content="ie=edge" />
         <title>Document</title>
-        
+
         <!-- ----------------------------------- Bootstrap-------------------------------------------------- -->
-        
+
         <link
             rel="stylesheet"
             href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
         />
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
-        
+        <script
+            src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+            crossorigin="anonymous"
+        ></script>
+        <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+            integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+            crossorigin="anonymous"
+        ></script>
+        <script
+            src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+            integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+            crossorigin="anonymous"
+        ></script>
+
         <!-- -------------------EOB------------------------------------------------------------------------- -->
 
         <script src="./Script/js-cookie.js"></script>
+
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+        <script src="./script.js"></script>
     </head>
     <body>
-        <script src="./script.js"></script>
+        <div class="container mt-5">
+            <div class="form">
+                <div class="form-group">
+                    <input
+                        id="createName"
+                        type="text"
+                        class="form-control form-control-lg text-center"
+                        placeholder="Whats the title of your Ikigai?"
+                    />
+                </div>
+                <div class="form-group">
+                    <button
+                        type="submit"
+                        class="btn btn-primary btn-block"
+                        id="createbtn"
+                    >
+                        Create your Ikigai
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="container mt-5">
+            <h1 class="display-3 text-center">Or view from others...</h1>
+        </div>
+        <div id="app" class="container mt-5">
+            <div class="d-flex justify-content-center flex-wrap">
+                <div v-for="ikigai in ikigais">
+                    <div class="card m-2" style="width: 18rem;">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ ikigai.Title }}</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">
+                                {{ ikigai.Author }}
+                            </h6>
+
+                            <a
+                                href="#"
+                                v-on:click="updateCache(ikigai)"
+                                class="card-link"
+                                >View</a
+                            >
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            document
+                .querySelector("#createbtn")
+                .addEventListener("click", async function() {
+                    const name = document.querySelector("#createName").value;
+                    if (name) {
+                        console.log("Creating");
+                        const response = await createIkigais(name).catch(err =>
+                            window.alert(err)
+                        );
+                        console.log(response)
+
+                        Cookies.set("ID", response.id);
+                        Cookies.set("Title", response.title);
+                        Cookies.set("Author", response.author);
+
+                        redirect('./main.html')
+                    }
+                });
+
+            if (!isNameSet()) redirect("./setName.html");
+            let app = new Vue({
+                el: "#app",
+
+                data: {
+                    ikigais: ""
+                },
+
+                methods: {
+                    initData: async function() {
+                        this.ikigais = await getIkigaisList();
+                    },
+                    updateCache: ikigai => {
+                        console.log("redirecting");
+                        Cookies.set("ID", ikigai.ID);
+                        Cookies.set("Title", ikigai.Title);
+                        Cookies.set("Author", ikigai.Author);
+
+                        redirect('./main.html')
+                    }
+                },
+
+                mounted() {
+                    this.initData();
+                }
+            });
+        </script>
     </body>
 </html>

@@ -1,3 +1,7 @@
+const redirect = location =>{
+    window.location.href = location
+}
+
 const isNameSet = () => {
     const name = Cookies.get("name");
     return name ? true : false;
@@ -11,7 +15,7 @@ const getName = () => {
     return Cookies.get("name");
 };
 
-const getIkigiasList = () => {
+const getIkigaisList = () => {
     return new Promise((resolve, reject) => {
         fetch("api/Ikigais/?$Select=id,title,author")
             .then(data => data.json())
@@ -19,7 +23,7 @@ const getIkigiasList = () => {
     });
 };
 
-const createIkigias = title => {
+const createIkigais = title => {
     return new Promise((resolve, reject) => {
         if (!isNameSet()) {
             reject("Name not set");

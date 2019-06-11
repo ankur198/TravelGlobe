@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <title>Document</title>
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+        <script src="./script.js"></script>
+    </head>
+    <body>
+        <div id="app">{{ ikigais }}</div>
+        <script>
+            //if (!isNameSet()) redirect("./setName.html");
+            new Vue({
+                el: "#app",
+
+                data: {
+                    ikigais: ""
+                },
+
+                methods: {
+                    initData: async function() {
+                        this.ikigais = await getIkigaisList();
+                    }
+                },
+
+                mounted() {
+                    this.initData();
+                }
+            });
+            // let initd = async () => {
+            //     app.ikigais = await getIkigaisList();
+            // };
+        </script>
+    </body>
+</html>
