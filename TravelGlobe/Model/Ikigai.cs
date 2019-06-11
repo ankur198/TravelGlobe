@@ -24,7 +24,7 @@ namespace TravelGlobe.Model
     [JsonConverter(typeof(StringEnumConverter))]
     public enum Positions
     {
-        goodAt, paidFor, worldNeeds, youLove, purpose, passion, profession
+        goodAt, profession, paidFor, vocation, worldNeeds, mission, youLove, passion, purpose
     }
 
     public class Position

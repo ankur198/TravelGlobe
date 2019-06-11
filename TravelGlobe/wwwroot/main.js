@@ -19,6 +19,7 @@ const getPosition = () => {
 };
 
 const addActivity = (id, position, description) => {
+    console.log({ id, position, description });
     return new Promise((resolve, reject) => {
         if (id && position && description) {
             fetch(`/api/positions/${id}/${position}`, {
@@ -36,12 +37,12 @@ const addActivity = (id, position, description) => {
     });
 };
 
-const updateActivity = (id,position,activity)=>{
+const updateActivity = (id, position, activity) => {
     return new Promise((resolve, reject) => {
         if (id && position && activity) {
             fetch(`/api/positions/${id}/${position}/${activity.id}`, {
                 method: "put",
-                body: JSON.stringify( activity ),
+                body: JSON.stringify(activity),
                 headers: {
                     "Content-Type": "application/json"
                 }
@@ -52,9 +53,23 @@ const updateActivity = (id,position,activity)=>{
             });
         }
     });
-}
+};
 
-new Vue({
+const deleteActivity = (id, position, activityId) => {
+    return new Promise((resolve, reject) => {
+        if (id && position && activityId) {
+            fetch(`/api/positions/${id}/${position}/${activityId}`, {
+                method: "delete"
+            }).then(data => {
+                if (data.status == 200) {
+                    resolve();
+                } else reject();
+            });
+        }
+    });
+};
+
+let x = new Vue({
     el: "#app",
     data: {
         name: "",
@@ -66,7 +81,8 @@ new Vue({
         showMajor: true,
 
         currentAct: null,
-        currentPos:null
+        currentPos: null,
+        selectedPos: null
     },
     mounted() {
         this.initData();
@@ -87,7 +103,7 @@ new Vue({
         },
 
         isMajor: function(position) {
-            const major = ["goodAt", "paidFor", "worldNeeds", "youLove"];
+            const major = ["goodAt", "paidFor", "worldNeeds", "youLove","purpose"];
             let val = false;
             major.forEach(element => {
                 if (element == position) {
@@ -107,10 +123,33 @@ new Vue({
         },
 
         updateActivity: async function(e) {
-            await updateActivity(this.id,this.currentPos,this.currentAct)
-            await this.refreshPositions()
-            this.currentAct=null
-            this.currentPos=null
+            await updateActivity(this.id, this.currentPos, this.currentAct);
+            await this.refreshPositions();
+            this.currentAct = null;
+            this.currentPos = null;
+        },
+
+        moveActivity: async function() {
+            await addActivity(
+                this.id,
+                this.selectedPos,
+                this.currentAct.description
+            );
+            await deleteActivity(this.id, this.currentPos, this.currentAct.id);
+            await this.refreshPositions();
+        },
+
+        deleteActivity: async function() {
+            await deleteActivity(this.id, this.currentPos, this.currentAct.id);
+            await this.refreshPositions();
+        },
+
+        possiblePositions: function() {
+            let allPos = this.positions.map(el => el.position);
+            let currentPosIndex = allPos.indexOf(this.currentPos.position);
+            allPos.splice(currentPosIndex, 1);
+            //console.log({allPos,currentPos:this.currentPos,currentPosIndex})
+            return allPos;
         }
     }
 });

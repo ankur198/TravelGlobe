@@ -6,6 +6,13 @@
         <meta http-equiv="X-UA-Compatible" content="ie=edge" />
         <title>Document</title>
 
+        <style>
+            .dark{
+                color: white !important;
+                background: transparent !important;
+            }
+        </style>
+
         <!-- ----------------------------------- Bootstrap-------------------------------------------------- -->
 
         <link
@@ -86,7 +93,12 @@
                         v-if="isMajor(position.position) || !showMajor"
                         v-for="position in positions"
                     >
-                        <div class="card my-2" style="width: 18rem;">
+                        <div
+                            class="card my-2"
+                            style="width: 18rem;"
+                            v-bind:class="{ 'text-white' : !isMajor(position.position) , 
+                            'bg-secondary' : !isMajor(position.position) }"
+                        >
                             <div class="card-body">
                                 <h5 class="card-title mb-4">
                                     {{ position.position }}
@@ -100,31 +112,40 @@
                                     <div class="input-group-append">
                                         <button
                                             :id="`add${position.position}Btn`"
-                                            class="btn btn-outline-secondary mb-4"
+                                            class="btn  mb-4"
                                             v-on:click="addActivity(position.position)"
+                                            v-bind:class="{
+                                                'btn-outline-secondary': isMajor(position.position),
+                                                'btn-light' : !isMajor(position.position)
+                                            }"
                                         >
                                             +
                                         </button>
                                     </div>
                                 </div>
-                                <ul class="list-group">
+                                <ul class="list-group list-group-flush">
                                     <li
                                         class="list-group-item"
                                         v-for="activity in position.activities"
+                                        v-bind:class="{'dark': !isMajor(position.position)}"
                                     >
                                         <div>
                                             <div class="float-left">
                                                 {{ activity.description }}
                                             </div>
-                                            <div class="float-right">
-                                                <div class="dropdown">
+                                            <div
+                                                v-if="editable"
+                                                class="float-right"
+                                            >
+                                                <div class="dropdown dropleft">
                                                     <button
-                                                        class="btn m-0 py-0"
+                                                        class="btn m-0 p-0"
                                                         type="button"
                                                         id="dropdownMenuButton"
                                                         data-toggle="dropdown"
                                                         aria-haspopup="true"
                                                         aria-expanded="false"
+                                                        v-bind:class="{'dark': !isMajor(position.position)}"
                                                     >
                                                         ...
                                                     </button>
@@ -136,8 +157,7 @@
                                                             class="dropdown-item"
                                                             data-toggle="modal"
                                                             data-target="#editModal"
-                                                            v-on:click=
-                                                            "
+                                                            v-on:click="
                                                             currentAct=JSON.parse(JSON.stringify(activity));
                                                             currentPos=position;
                                                             "
@@ -146,11 +166,23 @@
                                                         </button>
                                                         <button
                                                             class="dropdown-item"
+                                                            data-toggle="modal"
+                                                            data-target="#moveModal"
+                                                            v-on:click="
+                                                            currentAct=JSON.parse(JSON.stringify(activity));
+                                                            currentPos=position;
+                                                            "
                                                         >
                                                             Move
                                                         </button>
                                                         <button
                                                             class="dropdown-item"
+                                                            data-toggle="modal"
+                                                            data-target="#deleteModal"
+                                                            v-on:click="
+                                                            currentAct=JSON.parse(JSON.stringify(activity));
+                                                            currentPos=position;
+                                                            "
                                                         >
                                                             Delete
                                                         </button>
@@ -211,11 +243,125 @@
                             >
                                 Close
                             </button>
-                            <button type="button" class="btn btn-primary"
-                            v-on:click="updateActivity"
-                            data-dismiss="modal"
+                            <button
+                                type="button"
+                                class="btn btn-primary"
+                                v-on:click="updateActivity"
+                                data-dismiss="modal"
                             >
                                 Save changes
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- --------------------------- Move -------------------------------- -->
+            <div
+                class="modal fade"
+                id="moveModal"
+                tabindex="-1"
+                role="dialog"
+                aria-labelledby="moveModalLabel"
+                aria-hidden="true"
+            >
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="moveModalLabel">
+                                Move Activity
+                            </h5>
+                            <button
+                                type="button"
+                                class="close"
+                                data-dismiss="modal"
+                                aria-label="Close"
+                            >
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div v-if="currentAct" class="modal-body">
+                            <h5 class="mb-4">
+                                Select Destination
+                            </h5>
+                            <div class="form-group">
+                                <select
+                                    v-model="selectedPos"
+                                    class="form-control"
+                                >
+                                    <option
+                                        v-for="pos in possiblePositions()"
+                                        >{{ pos }}</option
+                                    >
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button
+                                type="button"
+                                class="btn btn-secondary"
+                                data-dismiss="modal"
+                            >
+                                Close
+                            </button>
+                            <button
+                                type="button"
+                                class="btn btn-primary"
+                                data-dismiss="modal"
+                                v-on:click="moveActivity"
+                            >
+                                Move
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ----------------------------Delete--------------------------------- -->
+            <div
+                class="modal fade"
+                id="deleteModal"
+                tabindex="-1"
+                role="dialog"
+                aria-labelledby="deleteModalLabel"
+                aria-hidden="true"
+            >
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="deleteModalLabel">
+                                Edit Activity
+                            </h5>
+                            <button
+                                type="button"
+                                class="close"
+                                data-dismiss="modal"
+                                aria-label="Close"
+                            >
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div v-if="currentAct" class="modal-body">
+                            <h5 class="mb-4">
+                                Are you sure you want to delete
+                                <em> "{{ currentAct.description }}" </em> ?
+                            </h5>
+                        </div>
+                        <div class="modal-footer">
+                            <button
+                                type="button"
+                                class="btn btn-secondary"
+                                data-dismiss="modal"
+                            >
+                                Close
+                            </button>
+                            <button
+                                type="button"
+                                class="btn btn-primary"
+                                v-on:click="deleteActivity"
+                                data-dismiss="modal"
+                            >
+                                Delete
                             </button>
                         </div>
                     </div>

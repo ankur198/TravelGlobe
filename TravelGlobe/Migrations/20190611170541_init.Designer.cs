@@ -9,7 +9,7 @@ using TravelGlobe.Models;
 namespace TravelGlobe.Migrations
 {
     [DbContext(typeof(TravelGlobeContext))]
-    [Migration("20190610200432_init")]
+    [Migration("20190611170541_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
