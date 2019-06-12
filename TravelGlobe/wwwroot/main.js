@@ -69,6 +69,11 @@ const deleteActivity = (id, position, activityId) => {
     });
 };
 
+hideModal = function(e) {
+    //console.log(e);
+    if (e.key === "Enter") $("#editModal").modal("hide");
+}
+
 let x = new Vue({
     el: "#app",
     data: {
@@ -103,7 +108,13 @@ let x = new Vue({
         },
 
         isMajor: function(position) {
-            const major = ["goodAt", "paidFor", "worldNeeds", "youLove","purpose"];
+            const major = [
+                "goodAt",
+                "paidFor",
+                "worldNeeds",
+                "youLove",
+                "purpose"
+            ];
             let val = false;
             major.forEach(element => {
                 if (element == position) {
@@ -125,6 +136,7 @@ let x = new Vue({
         updateActivity: async function(e) {
             await updateActivity(this.id, this.currentPos, this.currentAct);
             await this.refreshPositions();
+            //console.log(e.srcElement)
             this.currentAct = null;
             this.currentPos = null;
         },

@@ -7,7 +7,7 @@
         <title>Document</title>
 
         <style>
-            .dark{
+            .dark {
                 color: white !important;
                 background: transparent !important;
             }
@@ -39,7 +39,8 @@
 
         <script src="./Script/js-cookie.js"></script>
 
-        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+        <!-- <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script> -->
+        <script src="./Script/vue.min.js"></script>
 
         <script src="./script.js"></script>
     </head>
@@ -108,6 +109,7 @@
                                         :id="`add${position.position}Text`"
                                         type="text"
                                         class="form-control"
+                                        v-on:keyup.enter="addActivity(position.position)"
                                     />
                                     <div class="input-group-append">
                                         <button
@@ -229,9 +231,12 @@
                             </h5>
                             <div class="form-group">
                                 <input
+                                    id="editActivity"
                                     type="text"
                                     class="form-control"
+                                    onkeyup="hideModal(event)"
                                     v-model="currentAct.description"
+                                    v-on:keyup.enter="updateActivity"
                                 />
                             </div>
                         </div>
