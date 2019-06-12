@@ -15,6 +15,7 @@ App doesn't support authentication as of now because it was not in the scope. Ho
 - Using rest api including ODATA for query
 - Data stored in simple `sqlite db`
 - Used c# because it is strictly typed language and entity framework
+- Docker support to host almost anywhere containers are supported
 
 ### Frontend
 
