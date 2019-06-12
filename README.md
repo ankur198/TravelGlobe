@@ -23,4 +23,4 @@ Frontend build using `vanilla js, vue and bootstrap`
 
 There is a toggle major button to show intermediaries stages
 
-Moving, deleting, editing requies to click
+Moving, deleting, editing requies to click on `...`
